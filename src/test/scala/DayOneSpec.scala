@@ -7,7 +7,7 @@ class DayOneSpec extends AnyWordSpec {
       val expectedTotal = 142
 
       val dayOne = DayOne()
-      val actualTotal = dayOne.calibrationValuesSum("some-file-name")
+      val actualTotal = dayOne.calibrationValuesSum("./day-one-input-test.txt")
 
       assert(actualTotal == expectedTotal)
     }
