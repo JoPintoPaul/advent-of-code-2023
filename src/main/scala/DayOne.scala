@@ -1,3 +1,7 @@
+import scala.annotation.tailrec
+import scala.io.Source
+import scala.util.Try
+
 trait DayOne {
   def calibrationValuesSum(filename: String): Int = {
     val calibrationLines: Seq[String] = FileReader.getLinesFromFile(filename)
@@ -17,29 +21,54 @@ case class DayOneTaskOne() extends DayOne {
 }
 
 case class DayOneTaskTwo() extends DayOne {
-  protected def valuePerLine(line: String): Int = {
-    val numberRegex = "(one|two|three|four|five|six|seven|eight|nine|[1-9])".r
-    val numbersAsWordsAndDigits: List[String] = numberRegex.findAllIn(line).toList
-
-    val numbersAsDigits: List[String] =  numbersAsWordsAndDigits map { number =>
-      if (number.length == 1) number
-      else convertWordToDigit(number)
-    }
-    s"${numbersAsDigits.head}${numbersAsDigits.last}".toInt
+  private val numbersMap = {
+    List("one", "two", "three", "four", "five", "six", "seven", "eight", "nine").zip(1 to 9).toMap
   }
 
-  private def convertWordToDigit(word: String): String = {
-    word match {
-      case "one" => "1"
-      case "two" => "2"
-      case "three" => "3"
-      case "four" => "4"
-      case "five" => "5"
-      case "six" => "6"
-      case "seven" => "7"
-      case "eight" => "8"
-      case "nine" => "9"
-      case _ => throw new Exception(s"This is not a valid digit!!!! $word")
+  protected def valuePerLine(line: String): Int = {
+    val numberRegex = "(one|two|three|four|five|six|seven|eight|nine|[1-9])".r
+
+    @tailrec
+    def findNumbers(found: List[String], remaining: String): List[String] = {
+      numberRegex.findFirstIn(remaining) match {
+        case None => found
+        case Some(number) =>
+          val updatedRemaining = {
+            if (number.length == 1) remaining.tail
+            else remaining.substring(remaining.indexOf(number) + 1)
+          }
+          findNumbers(found :+ number, updatedRemaining)
+      }
     }
+
+    val numbersAsDigits = findNumbers(List.empty, line) map { number =>
+      if (number.length == 1) number
+      else numbersMap(number).toString
+    }
+
+    s"${numbersAsDigits.head}${numbersAsDigits.last}".toInt
+  }
+}
+
+object FileReader {
+  def getLinesFromFile(filename: String): List[String] = {
+    val source = Source.fromResource(filename)
+    val lines = source.getLines().toList
+    source.close()
+    lines
+  }
+}
+
+object DayOne_PartOne {
+  def main(args: Array[String]): Unit = {
+    val sum = DayOneTaskOne().calibrationValuesSum("day-one-input.txt")
+    println(sum)
+  }
+}
+
+object DayOne_PartTwo {
+  def main(args: Array[String]): Unit = {
+    val sum = DayOneTaskTwo().calibrationValuesSum("day-one-input.txt")
+    println(sum)
   }
 }
