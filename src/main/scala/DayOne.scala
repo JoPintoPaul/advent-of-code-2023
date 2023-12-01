@@ -2,19 +2,17 @@ trait DayOne {
   def calibrationValuesSum(filename: String): Int = {
     val calibrationLines: Seq[String] = FileReader.getLinesFromFile(filename)
     val valuesPerLine: Seq[Int] = calibrationLines.map(valuePerLine)
+    calibrationLines.zip(valuesPerLine).foreach(println)
     valuesPerLine.sum
   }
 
   protected def valuePerLine(line: String): Int
-
-  protected def firstAndLastToInt(allIntegers: List[Int]): Int =
-    s"${allIntegers.head}${allIntegers.last}".toInt
 }
 
 case class DayOneTaskOne() extends DayOne {
 
   protected def valuePerLine(line: String): Int = {
-    val allIntegers: Seq[Char] = line.filter(_.isDigit)
+    val allIntegers = line.filter(_.isDigit).map(_.toString)
     s"${allIntegers.head}${allIntegers.last}".toInt
   }
 }
@@ -44,12 +42,5 @@ case class DayOneTaskTwo() extends DayOne {
       case "nine" => "9"
       case _ => throw new Exception(s"This is not a valid digit!!!! $word")
     }
-  }
-}
-
-object DayOneTask {
-  def main(args: Array[String]): Unit = {
-    val sum = DayOneTaskTwo().calibrationValuesSum("day-one-input.txt")
-    println(sum)
   }
 }
