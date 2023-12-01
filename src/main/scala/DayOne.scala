@@ -2,7 +2,6 @@ trait DayOne {
   def calibrationValuesSum(filename: String): Int = {
     val calibrationLines: Seq[String] = FileReader.getLinesFromFile(filename)
     val valuesPerLine: Seq[Int] = calibrationLines.map(valuePerLine)
-    calibrationLines.zip(valuesPerLine).foreach(println)
     valuesPerLine.sum
   }
 
