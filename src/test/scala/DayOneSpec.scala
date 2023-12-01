@@ -6,7 +6,7 @@ class DayOneSpec extends AnyWordSpec {
     "return the expected total for task one" in {
       val expectedTotal = 142
 
-      val actualTotal = DayOneTaskOne().calibrationValuesSum("./day-one-task-one-input-test.txt")
+      val actualTotal = DayOne().calculate("./day-one-task-one-input-test.txt")
 
       assert(actualTotal == expectedTotal)
     }
@@ -14,7 +14,7 @@ class DayOneSpec extends AnyWordSpec {
     "return the expected total for task two" in {
       val expectedTotal = 281
 
-      val actualTotal = DayOneTaskTwo().calibrationValuesSum("./day-one-task-two-input-test.txt")
+      val actualTotal = DayOne(taskTwo = true).calculate("./day-one-task-two-input-test.txt")
 
       assert(actualTotal == expectedTotal)
     }
