@@ -7,22 +7,14 @@ case class DayOne(taskTwo: Boolean = false) {
   }
 
   def calculate(filename: String): Int = {
-    val lines: Seq[String] = getLinesFromFile(filename)
+    val lines: Seq[String] = Source.fromResource(filename).getLines().toList
     val calculation: String => Int  = if (taskTwo) valuePerLineTwo else valuePerLineOne
-    val values: Seq[Int] = lines.map(calculation(_))
-    values.sum
-  }
-
-  private def getLinesFromFile(filename: String): List[String] = {
-    val source = Source.fromResource(filename)
-    val lines = source.getLines().toList
-    source.close()
-    lines
+    lines.map(calculation(_)).sum
   }
 
   protected def valuePerLineOne(line: String): Int = {
-    val allIntegers = line.filter(_.isDigit).map(_.toString)
-    s"${allIntegers.head}${allIntegers.last}".toInt
+    val digits = line.filter(_.isDigit).map(_.toString)
+    s"${digits.head}${digits.last}".toInt
   }
 
   protected def valuePerLineTwo(line: String): Int = {
@@ -41,25 +33,23 @@ case class DayOne(taskTwo: Boolean = false) {
       }
     }
 
-    val asDigits = findNumbers(List.empty, line) map { number =>
+    val digits = findNumbers(List.empty, line) map { number =>
       if (number.length == 1) number
       else numbersMap(number).toString
     }
 
-    s"${asDigits.head}${asDigits.last}".toInt
+    s"${digits.head}${digits.last}".toInt
   }
 }
 
 object DayOne_PartOne {
   def main(args: Array[String]): Unit = {
-    val sum = DayOne().calculate("day-one-input.txt")
-    println(sum)
+    println(DayOne().calculate("day-one-input.txt"))
   }
 }
 
 object DayOne_PartTwo {
   def main(args: Array[String]): Unit = {
-    val sum = DayOne(taskTwo = true).calculate("day-one-input.txt")
-    println(sum)
+    println(DayOne(taskTwo = true).calculate("day-one-input.txt"))
   }
 }
