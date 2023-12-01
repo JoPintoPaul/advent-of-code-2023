@@ -12,12 +12,12 @@ case class DayOne(taskTwo: Boolean = false) {
     lines.map(calculation(_)).sum
   }
 
-  protected def valuePerLineOne(line: String): Int = {
+  private def valuePerLineOne(line: String): Int = {
     val digits = line.filter(_.isDigit).map(_.toString)
     s"${digits.head}${digits.last}".toInt
   }
 
-  protected def valuePerLineTwo(line: String): Int = {
+  private def valuePerLineTwo(line: String): Int = {
     val regex = "(one|two|three|four|five|six|seven|eight|nine|[1-9])".r
 
     @tailrec
