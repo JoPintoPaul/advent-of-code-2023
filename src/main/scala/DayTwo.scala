@@ -8,16 +8,35 @@ case class DayTwo() {
     "blue" -> 14
   )
 
-  def calculate(filename: String): Int = {
-    val lines = Source.fromResource(filename).getLines().toList
-    lines.map(possibleGameNumbers).sum
+  def calculateSumOfPossibleGames(filename: String): Int = {
+    val games = Source.fromResource(filename).getLines().toList
+    games.map(possibleGameNumbers).sum
+  }
+
+  def calculatePowerOfLowestCubes(filename: String): Int = {
+    val games = Source.fromResource(filename).getLines().toList
+    val requiredPerColour = games.map(findRequiredByColour)
+    requiredPerColour.map(_.values.product).sum
+  }
+
+  private def findRequiredByColour(game: String) = {
+    val numberOfCubesAndColour: Seq[(Int, String)] =
+      parseLineToNumbersAndColour(game.split(":").toList.last)
+
+    val groupedByColour: Map[String, Seq[Int]] =
+      numberOfCubesAndColour.groupBy(_._2).map(grouped => (grouped._1, grouped._2.map(_._1)))
+
+    val requiredPerColour =
+      groupedByColour.map(grouped => (grouped._1, grouped._2.max))
+
+    requiredPerColour
   }
 
   private def possibleGameNumbers(line: String): Int = {
     val gameNumberAndSets = line.split(":").toList
 
     val gameNumber =
-      gameNumberAndSets.head.split(" ").last.toInt
+      line.split(":").toList.head.split(" ").last.toInt
 
     val numberOfCubesAndColour =
       parseLineToNumbersAndColour(gameNumberAndSets.last)
@@ -43,7 +62,7 @@ case class DayTwo() {
 
 object DayTwo {
   def main(args: Array[String]): Unit = {
-    println(DayTwo().calculate("day-two-input.txt"))
+    println(DayTwo().calculatePowerOfLowestCubes("day-two-input.txt"))
   }
 }
 
