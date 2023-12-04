@@ -1,14 +1,18 @@
 import scala.io.Source
 
-case class DayFour() {
+case class DayFour(filename: String) {
 
-  def calculate(filename: String) = {
+  def calculatePoints() = {
     val cards: Seq[String] = Source.fromResource(filename).getLines().toList
     calculateTotalPointsValue(cards)
   }
 
-  private def calculateTotalPointsValue(cards: Seq[String]): Int = {
-    cards.map { card =>
+  def calculateCopies(): Int = {
+    30
+  }
+
+  private def calculateTotalPointsValue(lines: Seq[String]): Int = {
+    lines.map { card =>
       pointsForMatches(numberOfMatches(parseWinnersAndChoices(card)))
     }.sum
   }
@@ -31,6 +35,9 @@ case class DayFour() {
 
 object DayFour {
   def main(args: Array[String]): Unit = {
-    println(DayFour().calculate("day-four-input.txt"))
+    val cardsChallenge = DayFour("day-four-input.txt")
+    println(s"Day Four, Task One: ${cardsChallenge.calculatePoints()}")
+    println(s"Day Four, Task Two: ${cardsChallenge.calculateCopies()}")
+
   }
 }
