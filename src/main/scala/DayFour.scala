@@ -1,20 +1,27 @@
+import scala.annotation.tailrec
 import scala.io.Source
 
 case class DayFour(filename: String) {
 
-  def calculatePoints() = {
-    val cards: Seq[String] = Source.fromResource(filename).getLines().toList
-    calculateTotalPointsValue(cards)
+  case class Card(gameNumber: Int, winningMatches: Int)
+
+  def calculatePoints(): Int = {
+    @tailrec
+    def doPoints(unprocessedLines: Seq[String], currentTotal: Int): Int = {
+      if (unprocessedLines.isEmpty) currentTotal
+      else {
+        doPoints(
+          unprocessedLines.tail,
+          currentTotal + pointsForMatches(numberOfMatches(parseWinnersAndChoices(unprocessedLines.head)))
+        )
+      }
+    }
+
+    doPoints(Source.fromResource(filename).getLines().toList, 0)
   }
 
   def calculateCopies(): Int = {
     30
-  }
-
-  private def calculateTotalPointsValue(lines: Seq[String]): Int = {
-    lines.map { card =>
-      pointsForMatches(numberOfMatches(parseWinnersAndChoices(card)))
-    }.sum
   }
 
   private def parseWinnersAndChoices(card: String): (Seq[Int], Seq[Int]) = {
