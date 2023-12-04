@@ -6,7 +6,7 @@ class DayTwoSpec extends AnyWordSpec {
     "return the expected total for task one" in {
       val expectedTotal = 8
 
-      val actualTotal = DayTwo().calculateSumOfPossibleGames("./day-two-task-one-input-test.txt")
+      val actualTotal = DayTwo().calculateSumOfPossibleGames("day-two-input-test.txt")
 
       assert(actualTotal == expectedTotal)
     }
@@ -14,7 +14,7 @@ class DayTwoSpec extends AnyWordSpec {
     "return the expected total for task two" in {
       val expectedTotal = 2286
 
-      val actualTotal = DayTwo().calculatePowerOfLowestCubes("./day-two-task-one-input-test.txt")
+      val actualTotal = DayTwo().calculatePowerOfLowestCubes("day-two-input-test.txt")
 
       assert(actualTotal == expectedTotal)
     }
