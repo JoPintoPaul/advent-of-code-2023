@@ -1,7 +1,10 @@
 import scala.annotation.tailrec
+import scala.collection.immutable.ListMap
 import scala.io.Source
 
 case class DayFour(filename: String) {
+
+  private val lines = Source.fromResource(filename).getLines().toList
 
   case class Card(gameNumber: Int, winningMatches: Int)
 
@@ -17,11 +20,43 @@ case class DayFour(filename: String) {
       }
     }
 
-    doPoints(Source.fromResource(filename).getLines().toList, 0)
+    doPoints(lines, 0)
   }
 
   def calculateCopies(): Int = {
-    30
+
+    val upperBound = lines.length
+
+    def doCopies(gameNumber: Int, unprocessedLines: Seq[String], copies: Map[Int, Int]): Map[Int, Int] = {
+
+      @tailrec
+      def updateCopies(copiesToAdd: Seq[Int], ticketCount: Map[Int, Int]): Map[Int, Int] = {
+        val updatedTicketCount =
+          if (ticketCount.contains(gameNumber)) ticketCount else ticketCount + (gameNumber -> 1)
+
+        if (copiesToAdd.isEmpty) updatedTicketCount
+        else {
+          val numberToAdd: Int = updatedTicketCount(gameNumber)
+          val updatedMap =
+            updatedTicketCount + (copiesToAdd.head -> (updatedTicketCount.getOrElse(copiesToAdd.head, 1) + numberToAdd))
+          updateCopies(copiesToAdd.tail, updatedMap)
+        }
+      }
+
+      if (unprocessedLines.isEmpty) copies
+      else {
+        val numberOfWinningMatches: Int = numberOfMatches(parseWinnersAndChoices(unprocessedLines.head))
+        val copiesToMake: Seq[Int] =
+          if (numberOfWinningMatches == 0) Nil
+          else (1 to numberOfWinningMatches) map {_ + gameNumber} filterNot(_ > upperBound)
+        val updatedMap = updateCopies(copiesToMake, copies)
+
+        doCopies(gameNumber + 1, unprocessedLines.tail, updatedMap)
+      }
+    }
+
+    val result = doCopies(1, lines, Map.empty)
+    result.values.sum
   }
 
   private def parseWinnersAndChoices(card: String): (Seq[Int], Seq[Int]) = {
